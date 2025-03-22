@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class EarthOrbit : MonoBehaviour
+public class Earth : MonoBehaviour
 {
-    public Transform sun;
-    public LineRenderer orbitLine;
+    [SerializeField] Transform sun;
+    [SerializeField] LineRenderer orbitLine;
 
     private List<Vector3> orbitPoints = new List<Vector3>();
     private int currentIndex = 0;
@@ -15,8 +15,8 @@ public class EarthOrbit : MonoBehaviour
 
     private float orbitSpeed;
 
-    public float rotationSpeed = 1f;
-    public float axialTilt = 23.5f;
+    private float rotationSpeed = 530f;
+    private float axialTilt = 23.5f;
     private float rotationAngle = 0f;
 
     void Start()

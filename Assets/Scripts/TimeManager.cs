@@ -1,34 +1,18 @@
 using UnityEngine;
+using System;
 
 public class TimeManager : MonoBehaviour
 {
-    public int Year = 0;
-    public int Day = 0;
-    public int Hour = 0;
-    public int Minute = 0;
-    public int Second = 0;
-
+    public DateTime GameTime = new DateTime(1, 1, 1, 0, 0, 0); //1³â 1¿ù 1ÀÏ 00:00:00
     private float timer = 0;
 
     void Update()
     {
         timer += Time.deltaTime;
-
-        if (timer >= 1)
+        if (timer >= 1f)
         {
-            Hour++;
-            timer = 0;
-        }
-
-        if (Hour == 24)
-        {
-            Day++;
-            Hour = 0;
-        }
-        if (Day == 365)
-        {
-            Year++;
-            Day = 0;
+            GameTime = GameTime.AddSeconds((int)timer);
+            timer %= 1f;
         }
     }
 }
