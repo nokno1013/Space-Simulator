@@ -640,6 +640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sun: {fileID: 1780906391}
   orbitLine: {fileID: 271943955}
+  e: 0.5
 --- !u!1 &1486435121
 GameObject:
   m_ObjectHideFlags: 0
@@ -792,11 +793,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 502340b520834bf4686d7ff2c142c035, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Year: 0
-  Day: 0
-  Hour: 0
-  Minute: 0
-  Second: 0
 --- !u!1 &1780906387
 GameObject:
   m_ObjectHideFlags: 0
@@ -809,6 +805,7 @@ GameObject:
   - component: {fileID: 1780906390}
   - component: {fileID: 1780906389}
   - component: {fileID: 1780906388}
+  - component: {fileID: 1780906392}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -905,6 +902,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1780906392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780906387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 492dd6254f135eb4bbc414455f58cd3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
