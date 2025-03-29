@@ -6,18 +6,24 @@ public class Earth : MonoBehaviour
     [SerializeField] Transform sun;
     [SerializeField] LineRenderer orbitLine;
 
+    public static float LongR = 149.6f; //장반경 (단위: 백만 km)
+    public static float ShortR;
+    public float e = 0.9f;
+
     private List<Vector3> orbitPoints = new List<Vector3>();
     private int currentIndex = 0;
-    private int segments = 360;
-
-    private float semiMajorAxis = 149.6f; // 반장축 (단위: 백만 km)
-    private float e = 0.0167f;
+    private int points = 360;
 
     private float orbitSpeed;
 
     private float rotationSpeed = 530f;
     private float axialTilt = 23.5f;
     private float rotationAngle = 0f;
+
+    private void OnEnable()
+    {
+        ShortR = LongR * Mathf.Sqrt(1 - e * e); //단반경
+    }
 
     void Start()
     {
@@ -34,26 +40,24 @@ public class Earth : MonoBehaviour
 
     void CreateOrbit()
     {
-        float semiMinorAxis = semiMajorAxis * Mathf.Sqrt(1 - e * e); // 반단축 계산
+        orbitLine.loop = true;
         orbitPoints.Clear();
-        orbitLine.positionCount = segments;
+        orbitLine.positionCount = points;
 
-        for (int i = 0; i < segments; i++)
+        for (int i = 0; i < points; i++)
         {
-            float theta = (i / (float)segments) * 2f * Mathf.PI; // 각도 계산
-            float x = semiMajorAxis * Mathf.Cos(theta);
-            float z = semiMinorAxis * Mathf.Sin(theta);
+            float theta = (i / (float)points) * 2f * Mathf.PI; //각도 계산
+            float x = LongR * Mathf.Cos(theta);
+            float z = ShortR * Mathf.Sin(theta);
             Vector3 point = new Vector3(x, 0, z);
             orbitPoints.Add(point);
-            orbitLine.SetPosition(i, point); // 궤도 라인 렌더러에 적용
+            orbitLine.SetPosition(i, point);
         }
     }
 
     void CalculateSpeed()
     {
-        // 타원의 둘레 근사값 계산
-        float semiMinorAxis = semiMajorAxis * Mathf.Sqrt(1 - e * e);
-        float perimeter = Mathf.PI * (3 * (semiMajorAxis + semiMinorAxis) - Mathf.Sqrt((3 * semiMajorAxis + semiMinorAxis) * (semiMajorAxis + 3 * semiMinorAxis)));
+        float perimeter = Mathf.PI * (3 * (LongR + ShortR) - Mathf.Sqrt((3 * LongR + ShortR) * (LongR + 3 * ShortR)));  //둘레 계산
 
         // 365초 동안 한 바퀴 돌도록 속도 계산
         orbitSpeed = perimeter / 365;
@@ -63,14 +67,9 @@ public class Earth : MonoBehaviour
     {
         if (orbitPoints.Count == 0) return;
 
-        // 현재 위치에서 다음 위치로 이동
         transform.position = Vector3.MoveTowards(transform.position, orbitPoints[currentIndex], orbitSpeed * Time.deltaTime);
-
-        // 목표 지점에 도달하면 다음 지점으로 이동
         if (Vector3.Distance(transform.position, orbitPoints[currentIndex]) < 0.01f)
-        {
             currentIndex = (currentIndex + 1) % orbitPoints.Count;
-        }
 
         transform.LookAt(sun);
     }
