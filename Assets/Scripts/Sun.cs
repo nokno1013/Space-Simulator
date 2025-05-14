@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class Sun : MonoBehaviour
 {
-    OrbitMaker theOrbitMaker;
+    Earth theEarth;
 
     void Start()
     {
-        theOrbitMaker = FindAnyObjectByType<OrbitMaker>();
+        theEarth = FindAnyObjectByType<Earth>();
 
-        float c = Mathf.Sqrt(theOrbitMaker.LongR * theOrbitMaker.LongR - theOrbitMaker.ShortR * theOrbitMaker.ShortR);
+        float c = Mathf.Sqrt(theEarth.LongR * theEarth.LongR - theEarth.ShortR * theEarth.ShortR);
 
         transform.position = new Vector3(c, 0, 0);
     }

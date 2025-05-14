@@ -5,7 +5,6 @@ public class OrbitMaker : MonoBehaviour
 {
     [SerializeField] LineRenderer orbitLine;
     [SerializeField] Transform sun;
-    [SerializeField] GameObject pointPrefab;
     [SerializeField] int Accuracy = 1;
 
     public float LongR = 149.6f; //장반경 (단위: 백만 km)

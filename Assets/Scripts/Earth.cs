@@ -1,57 +1,82 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Earth : MonoBehaviour
 {
     [SerializeField] Transform sun;
+    [SerializeField] LineRenderer orbitLine;
 
-    private float orbitSpeed;
+    [SerializeField] int segments = 1;
+    public float e = 0.0167f;
+    public float LongR = 149.6f; //장반경 (단위: 백만 km)
+    public float ShortR;
 
-    private float rotationSpeed = 530f;
-    private float axialTilt = 23.5f;
-    private float rotationAngle = 0f;
+    private List<Vector3> orbitPoints = new List<Vector3>();
 
-    private int idx = 0;
+    private int currentIndex = 0;
+    private int points;
+    private float t = 0f;
+    private float segmentTime = 1f;
 
-    OrbitMaker theOrbitMaker;
+    private void OnEnable()
+    {
+        points = segments * 365;
+        ShortR = LongR * Mathf.Sqrt(1 - e * e); //단반경
+    }
 
     void Start()
     {
-        theOrbitMaker = FindAnyObjectByType<OrbitMaker>();
-
-        CalculateSpeed();
+        CreateOrbit();
+        transform.position = orbitPoints[0];
     }
 
     void Update()
     {
-        if (theOrbitMaker.is_CalculateComplete)
+        MoveWithKeplerLaw();
+    }
+
+    void CreateOrbit()
+    {
+        orbitPoints.Clear();
+        orbitLine.loop = true;
+        orbitLine.positionCount = points;
+
+        for (int i = 0; i < points; i++)
         {
-            MoveToOrbit();
-            RotateEarth();
+            float theta = (i / (float)points) * 2f * Mathf.PI;
+            float x = LongR * Mathf.Cos(theta);
+            float z = ShortR * Mathf.Sin(theta);
+            Vector3 point = new Vector3(x, 0, z);
+            orbitPoints.Add(point);
+            orbitLine.SetPosition(i, point);
         }
     }
 
-    void CalculateSpeed()
+    void MoveWithKeplerLaw()
     {
-        float perimeter = Mathf.PI * (3 * (theOrbitMaker.LongR + theOrbitMaker.ShortR) - Mathf.Sqrt((3 * theOrbitMaker.LongR + theOrbitMaker.ShortR) * (theOrbitMaker.LongR + 3 * theOrbitMaker.ShortR)));  //둘레 계산
+        if (orbitPoints.Count == 0) return;
 
-        // 365초 동안 한 바퀴 돌도록 속도 계산
-        orbitSpeed = perimeter / 365;
-    }
+        Vector3 start = orbitPoints[currentIndex];
+        Vector3 end = orbitPoints[(currentIndex + 1) % orbitPoints.Count];
 
-    void MoveToOrbit()
-    {
-        if (theOrbitMaker.orbit.Count == 0) return;
+        float R = Vector3.Distance(transform.position, sun.position);
+        Debug.Log(R);
+        float speed = 1f / R;
+        speed *= 1000000f * Mathf.Pow(100, segments);
 
-        transform.position = Vector3.MoveTowards(transform.position, theOrbitMaker.orbit[idx], orbitSpeed * Time.deltaTime);
-        if (Vector3.Distance(transform.position, theOrbitMaker.orbit[idx]) < 0.01f)
-            idx++;
+        float distance = Vector3.Distance(start, end);
+        segmentTime = distance / speed;
+        t += Time.deltaTime / segmentTime;
+
+        transform.position = Vector3.Lerp(start, end, t);
+
+        if (t >= 1f)
+        {
+            currentIndex = (currentIndex + 1) % orbitPoints.Count;
+            t = 0f;
+        }
 
         transform.LookAt(sun);
-    }
-
-    void RotateEarth()
-    {
-        rotationAngle += rotationSpeed * Time.deltaTime;
-        transform.rotation = Quaternion.Euler(axialTilt, rotationAngle, 0);
+        //transform.Rotate(Vector3.up, 360f / 365f * Time.deltaTime); // 자전 (옵션)
     }
 }
