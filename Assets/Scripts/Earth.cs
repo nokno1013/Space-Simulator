@@ -1,82 +1,78 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class Earth : MonoBehaviour
 {
     [SerializeField] Transform sun;
     [SerializeField] LineRenderer orbitLine;
 
-    [SerializeField] int segments = 1;
+    [SerializeField] int softness = 1;
+
+    [HideInInspector] public float ShortR;
+
     public float e = 0.0167f;
-    public float LongR = 149.6f; //장반경 (단위: 백만 km)
-    public float ShortR;
+    public float LongR = 149.6f; // 장반경 (단위: 백만 km)
 
-    private List<Vector3> orbitPoints = new List<Vector3>();
+    CSVManager theCSVManager;
 
-    private int currentIndex = 0;
-    private int points;
-    private float t = 0f;
-    private float segmentTime = 1f;
+    private int segments = 365;
 
-    private void OnEnable()
-    {
-        points = segments * 365;
-        ShortR = LongR * Mathf.Sqrt(1 - e * e); //단반경
-    }
+    private float theta = 0f;
+    private float R = 0f;
+    private float w = 0f;
+    private Vector3 position = Vector3.zero;
 
     void Start()
     {
+        theCSVManager = FindAnyObjectByType<CSVManager>();
+
+        ShortR = LongR * Mathf.Sqrt(1 - e * e); // 단반경
         CreateOrbit();
-        transform.position = orbitPoints[0];
+        transform.position = GetEllipsePosition(theta);
+
+        segments = softness * 365;
     }
 
     void Update()
     {
-        MoveWithKeplerLaw();
+        Kepler2Law();
+        theCSVManager.WriteData(theta, R, w, position);
     }
 
     void CreateOrbit()
     {
-        orbitPoints.Clear();
         orbitLine.loop = true;
-        orbitLine.positionCount = points;
+        orbitLine.positionCount = segments;
 
-        for (int i = 0; i < points; i++)
+        for (int i = 0; i < segments; i++)
         {
-            float theta = (i / (float)points) * 2f * Mathf.PI;
-            float x = LongR * Mathf.Cos(theta);
-            float z = ShortR * Mathf.Sin(theta);
-            Vector3 point = new Vector3(x, 0, z);
-            orbitPoints.Add(point);
+            float angle = (i / (float)segments) * 2f * Mathf.PI;
+            Vector3 point = GetEllipsePosition(angle);
             orbitLine.SetPosition(i, point);
         }
     }
 
-    void MoveWithKeplerLaw()
+    Vector3 GetEllipsePosition(float angle)
     {
-        if (orbitPoints.Count == 0) return;
+        float x = LongR * Mathf.Cos(angle);
+        float z = ShortR * Mathf.Sin(angle);
+        return new Vector3(x, 0, z);
+    }
 
-        Vector3 start = orbitPoints[currentIndex];
-        Vector3 end = orbitPoints[(currentIndex + 1) % orbitPoints.Count];
+    void Kepler2Law()
+    {
+        R = Vector3.Distance(transform.position, sun.position);
+        w = 1f / R;
+        w *= 100;
 
-        float R = Vector3.Distance(transform.position, sun.position);
-        Debug.Log(R);
-        float speed = 1f / R;
-        speed *= 1000000f * Mathf.Pow(100, segments);
-
-        float distance = Vector3.Distance(start, end);
-        segmentTime = distance / speed;
-        t += Time.deltaTime / segmentTime;
-
-        transform.position = Vector3.Lerp(start, end, t);
-
-        if (t >= 1f)
+        theta += w * Time.deltaTime;
+        if (theta > Mathf.PI * 2f)
         {
-            currentIndex = (currentIndex + 1) % orbitPoints.Count;
-            t = 0f;
+            theta -= Mathf.PI * 2f;
         }
 
+        transform.position = GetEllipsePosition(theta);
+        position = transform.position;
+
         transform.LookAt(sun);
-        //transform.Rotate(Vector3.up, 360f / 365f * Time.deltaTime); // 자전 (옵션)
     }
 }
