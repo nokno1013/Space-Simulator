@@ -13,6 +13,7 @@ public class Earth : MonoBehaviour
     public float LongR = 149.6f; // 장반경 (단위: 백만 km)
 
     CSVManager theCSVManager;
+    PointManager thePointManager;
 
     private int segments = 365;
 
@@ -21,13 +22,18 @@ public class Earth : MonoBehaviour
     private float w = 0f;
     private Vector3 position = Vector3.zero;
 
+    private float aphelion = 0f;     //원일점
+    private float perihelion = 100000f;     //근일점
+
+
     void Start()
     {
         theCSVManager = FindAnyObjectByType<CSVManager>();
+        thePointManager = FindAnyObjectByType<PointManager>();
 
-        ShortR = LongR * Mathf.Sqrt(1 - e * e); // 단반경
+        ShortR = LongR * Mathf.Sqrt(1 - e * e); //단반경
         CreateOrbit();
-        transform.position = GetEllipsePosition(theta);
+        transform.position = GetPosition(theta);
 
         segments = softness * 365;
     }
@@ -35,6 +41,20 @@ public class Earth : MonoBehaviour
     void Update()
     {
         Kepler2Law();
+
+        thePointManager.SetCuttent(position);
+        if (R > aphelion)
+        {
+            aphelion = R;
+            thePointManager.SetAphelion(position);
+        }
+        if (R < perihelion)
+        {
+            perihelion = R;
+            thePointManager.SetPerihelion(position);
+        }
+
+
         theCSVManager.WriteData(theta, R, w, position);
     }
 
@@ -46,12 +66,12 @@ public class Earth : MonoBehaviour
         for (int i = 0; i < segments; i++)
         {
             float angle = (i / (float)segments) * 2f * Mathf.PI;
-            Vector3 point = GetEllipsePosition(angle);
+            Vector3 point = GetPosition(angle);
             orbitLine.SetPosition(i, point);
         }
     }
 
-    Vector3 GetEllipsePosition(float angle)
+    Vector3 GetPosition(float angle)
     {
         float x = LongR * Mathf.Cos(angle);
         float z = ShortR * Mathf.Sin(angle);
@@ -70,7 +90,7 @@ public class Earth : MonoBehaviour
             theta -= Mathf.PI * 2f;
         }
 
-        transform.position = GetEllipsePosition(theta);
+        transform.position = GetPosition(theta);
         position = transform.position;
 
         transform.LookAt(sun);

@@ -11,8 +11,8 @@ public class CSVManager : MonoBehaviour
         path = Application.persistentDataPath + "/orbiting_data.csv";
         writer = new StreamWriter(path, append: false);
 
-        writer.WriteLine("중심각[°], 반지름[10E7km], 각속도[rad/s], 속도[10E7km/s]," +
-            "주기[T], 진동수[f], 구심가속도[10E7km], 구심력[N], 좌표");
+        writer.WriteLine("중심각[°], 반지름[10E+7km], 각속도[rad/s], 속도[10E+7km/s]," +
+            "주기[T], 진동수[f], 구심가속도[10E+7km], 구심력[N], 좌표");
     }
 
     public void WriteData(float theta, float R, float w, Vector3 position)
