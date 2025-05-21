@@ -3,7 +3,7 @@ using UnityEngine;
 public class Earth : MonoBehaviour
 {
     [SerializeField] Transform sun;
-    [SerializeField] LineRenderer orbitLine;
+    public LineRenderer orbitLine;
 
     [SerializeField] int softness = 1;
 
@@ -14,11 +14,13 @@ public class Earth : MonoBehaviour
 
     CSVManager theCSVManager;
     PointManager thePointManager;
+    UIManager theUIManager;
 
     private int segments = 365;
 
     private float theta = 0f;
-    private float R = 0f;
+    private float r = 0f;
+    private float v = 0f;
     private float w = 0f;
     private Vector3 position = Vector3.zero;
 
@@ -30,6 +32,7 @@ public class Earth : MonoBehaviour
     {
         theCSVManager = FindAnyObjectByType<CSVManager>();
         thePointManager = FindAnyObjectByType<PointManager>();
+        theUIManager = FindAnyObjectByType<UIManager>();
 
         ShortR = LongR * Mathf.Sqrt(1 - e * e); //´Ü¹Ý°æ
         CreateOrbit();
@@ -42,20 +45,20 @@ public class Earth : MonoBehaviour
     {
         Kepler2Law();
 
-        thePointManager.SetCuttent(position);
-        if (R > aphelion)
+        thePointManager.SetCurrent(position);
+        if (r > aphelion)
         {
-            aphelion = R;
+            aphelion = r;
             thePointManager.SetAphelion(position);
         }
-        if (R < perihelion)
+        if (r < perihelion)
         {
-            perihelion = R;
+            perihelion = r;
             thePointManager.SetPerihelion(position);
         }
 
-
-        theCSVManager.WriteData(theta, R, w, position);
+        theCSVManager.WriteData(theta, r, v, w, position);
+        theUIManager.ShowInfoText(r, v, w, position);
     }
 
     void CreateOrbit()
@@ -80,9 +83,11 @@ public class Earth : MonoBehaviour
 
     void Kepler2Law()
     {
-        R = Vector3.Distance(transform.position, sun.position);
-        w = 1f / R;
-        w *= 100;
+        r = Vector3.Distance(transform.position, sun.position);
+        v = 1f / r;
+
+        w = v / r;
+        w *= 10000;
 
         theta += w * Time.deltaTime;
         if (theta > Mathf.PI * 2f)
