@@ -7,10 +7,10 @@ public class Earth : MonoBehaviour
 
     [SerializeField] int softness = 1;
 
+    [HideInInspector] public float LongR = 149.6f; // 장반경 (단위: 백만 km)
     [HideInInspector] public float ShortR;
-
-    public float e = 0.0167f;
-    public float LongR = 149.6f; // 장반경 (단위: 백만 km)
+    [HideInInspector] public float e = 0.0167f;
+    [HideInInspector] public float theta = 0f;
 
     CSVManager theCSVManager;
     PointManager thePointManager;
@@ -18,7 +18,6 @@ public class Earth : MonoBehaviour
 
     private int segments = 365;
 
-    private float theta = 0f;
     private float r = 0f;
     private float v = 0f;
     private float w = 0f;
@@ -57,8 +56,8 @@ public class Earth : MonoBehaviour
             thePointManager.SetPerihelion(position);
         }
 
-        theCSVManager.WriteData(theta, r, v, w, position);
-        theUIManager.ShowInfoText(r, v, w, position);
+        //theCSVManager.WriteData(theta, r, v, w, position);
+        //theUIManager.ShowInfoText(r, v, w, position);
     }
 
     void CreateOrbit()
