@@ -830,9 +830,9 @@ MonoBehaviour:
   sun: {fileID: 1780906391}
   orbitLine: {fileID: 271943955}
   softness: 2
+  e: 0.5
   LongR: 149.6
   ShortR: 0
-  e: 0.5
   theta: 0
 --- !u!1 &772065111
 GameObject:

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Android;
 
 public class AntiEarth : MonoBehaviour
 {
@@ -8,8 +9,6 @@ public class AntiEarth : MonoBehaviour
     [SerializeField] private LineRenderer area2;
 
     Earth theEarth;
-
-    float theta;
 
     private void Start()
     {
@@ -25,13 +24,10 @@ public class AntiEarth : MonoBehaviour
     void Update()
     {
         Vector3 sunPos = sun.position;
-        Vector3 center = sun.position + new Vector3(theEarth.LongR * theEarth.e, 0, 0);
-        Vector3 earthLocal = earth.position - center;
-
-        float antiTheta = theEarth.theta + Mathf.PI; //반대편 각도
-
-        Vector3 antiPos = new Vector3(theEarth.LongR * Mathf.Cos(antiTheta + Mathf.PI), 0, theEarth.ShortR * Mathf.Sin(antiTheta + Mathf.PI)) + center;
         
+        float antiTheta = theEarth.theta + Mathf.PI + 1.6326f * theEarth.e * Mathf.Sin(theEarth.theta);
+
+        Vector3 antiPos = new Vector3(theEarth.LongR * Mathf.Cos(antiTheta), 0, theEarth.ShortR * Mathf.Sin(antiTheta));
 
         transform.position = antiPos;
         area1.SetPosition(0, sunPos);

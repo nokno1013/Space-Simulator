@@ -6,10 +6,10 @@ public class Earth : MonoBehaviour
     public LineRenderer orbitLine;
 
     [SerializeField] int softness = 1;
+    public float e = 0.0167f;
 
     [HideInInspector] public float LongR = 149.6f; // 장반경 (단위: 백만 km)
     [HideInInspector] public float ShortR;
-    [HideInInspector] public float e = 0.0167f;
     [HideInInspector] public float theta = 0f;
 
     CSVManager theCSVManager;

@@ -46,6 +46,8 @@ public class MoveCamaera : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.G)) SetFollow();
 
         transform.position += move.normalized * moveSpeed * Time.deltaTime;
+
+        //if(Input.GetKeyUp(KeyCode.Escape)) Application.Quit();
     }
 
     private void SetFollow()
