@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Android;
 
 public class AntiEarth : MonoBehaviour
 {
@@ -24,8 +23,8 @@ public class AntiEarth : MonoBehaviour
     void Update()
     {
         Vector3 sunPos = sun.position;
-        
-        float antiTheta = theEarth.theta + Mathf.PI + 1.6326f * theEarth.e * Mathf.Sin(theEarth.theta);
+
+        float antiTheta = theEarth.theta + Mathf.PI + 1.672f * theEarth.e * Mathf.Sin(theEarth.theta);
 
         Vector3 antiPos = new Vector3(theEarth.LongR * Mathf.Cos(antiTheta), 0, theEarth.ShortR * Mathf.Sin(antiTheta));
 

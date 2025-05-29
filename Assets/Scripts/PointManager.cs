@@ -6,6 +6,11 @@ public class PointManager : MonoBehaviour
     [SerializeField] LineRenderer ALine;
     [SerializeField] LineRenderer PLine;
 
+    [SerializeField] LineRenderer p1Line;
+    [SerializeField] LineRenderer p2Line;
+    [SerializeField] LineRenderer q1Line;
+    [SerializeField] LineRenderer q2Line;
+
     [SerializeField] Transform sun;
 
     Earth theEarth;
@@ -19,19 +24,17 @@ public class PointManager : MonoBehaviour
         CLine.positionCount = 2;
         ALine.positionCount = 2;
         PLine.positionCount = 2;
+
+        p1Line.positionCount = 2;
+        p2Line.positionCount = 2;
+        q1Line.positionCount = 2;
+        q2Line.positionCount = 2;
     }
 
     private void Update()
     {
-        if (Input.GetKeyUp(KeyCode.F))
-        {
-            CLine.enabled = !CLine.enabled;
-            ALine.enabled = !ALine.enabled;
-            PLine.enabled = !PLine.enabled;
-            theEarth.orbitLine.enabled = !theEarth.orbitLine.enabled;
-
-            theUIManager.ShowOrbitText(CLine.enabled);
-        }
+        if (Input.GetKeyUp(KeyCode.F)) SwupLineEnable();
+        if (Input.GetKeyUp(KeyCode.R)) SetArea();
     }
 
     public void SetCurrent(Vector3 position)
@@ -50,5 +53,20 @@ public class PointManager : MonoBehaviour
     {
         PLine.SetPosition(0, sun.position);
         PLine.SetPosition(1, position);
+    }
+
+    private void SwupLineEnable()
+    {
+        CLine.enabled = !CLine.enabled;
+        ALine.enabled = !ALine.enabled;
+        PLine.enabled = !PLine.enabled;
+        theEarth.orbitLine.enabled = !theEarth.orbitLine.enabled;
+
+        theUIManager.ShowOrbitText(CLine.enabled);
+    }
+
+    private void SetArea()
+    {
+
     }
 }
