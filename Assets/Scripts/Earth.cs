@@ -44,7 +44,6 @@ public class Earth : MonoBehaviour
     {
         Kepler2Law();
 
-        thePointManager.SetCurrent(position);
         if (r > aphelion)
         {
             aphelion = r;
