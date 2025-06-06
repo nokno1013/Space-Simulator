@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI InfoText;
     [SerializeField] TextMeshProUGUI OrbitText;
     [SerializeField] TextMeshProUGUI FollowText;
+    [SerializeField] TextMeshProUGUI AreaText;
 
     public void ShowInfoText(float r, float v, float w, Vector3 position)
     {
@@ -28,5 +29,14 @@ public class UIManager : MonoBehaviour
     public void ShowFollowText(bool is_Parent)
     {
         FollowText.text = $"지구 따라가기(단축키 G): {is_Parent}";
+    }
+
+    public void ShowAreaText(float area1, float area2)
+    {
+        AreaText.text = "넓이 설정(단축키 R)\n" +
+            "넓이 삭제(단축키 T)\n" +
+            $"민트색 넓이: {area1}\n" +
+            $"노란색 넓이: {area2}\n" +
+            $"넓이의 차: {Mathf.Abs(area1 - area2)}";
     }
 }

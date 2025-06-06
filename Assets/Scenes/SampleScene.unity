@@ -1753,6 +1753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2706629f9b95ba3409a2236d62b6c721, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Sun: {fileID: 1780906391}
 --- !u!135 &1298018391
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2468,6 +2469,7 @@ MonoBehaviour:
   InfoText: {fileID: 1916181502}
   OrbitText: {fileID: 1046946292}
   FollowText: {fileID: 565252458}
+  AreaText: {fileID: 391184179}
 --- !u!1 &2014077046
 GameObject:
   m_ObjectHideFlags: 0

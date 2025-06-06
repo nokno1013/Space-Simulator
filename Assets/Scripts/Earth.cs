@@ -59,7 +59,17 @@ public class Earth : MonoBehaviour
         //theUIManager.ShowInfoText(r, v, w, position);
     }
 
-    void CreateOrbit()
+    public float GetTheta()
+    {
+        return theta;
+    }
+
+    public float GetR()
+    {
+        return r;
+    }
+
+    private void CreateOrbit()
     {
         orbitLine.loop = true;
         orbitLine.positionCount = segments;
@@ -72,14 +82,14 @@ public class Earth : MonoBehaviour
         }
     }
 
-    Vector3 GetPosition(float angle)
+    private Vector3 GetPosition(float angle)
     {
         float x = LongR * Mathf.Cos(angle);
         float z = ShortR * Mathf.Sin(angle);
         return new Vector3(x, 0, z);
     }
 
-    void Kepler2Law()
+    private void Kepler2Law()
     {
         r = Vector3.Distance(transform.position, sun.position);
         v = 1f / r;

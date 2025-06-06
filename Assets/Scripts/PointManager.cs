@@ -18,17 +18,24 @@ public class PointManager : MonoBehaviour
     [SerializeField] LineRenderer q2Line;
 
     Earth theEarth;
+    AntiEarth theAntiEarth;
     UIManager theUIManager;
 
-    private bool is_setted = false;
+    float p1Theta;
+    float q1Theta;
+    float p2Theta;
+    float q2Theta;
+
+    private int seted_idx = 0;
 
     void Start()
     {
         theEarth = FindAnyObjectByType<Earth>();
+        theAntiEarth = FindAnyObjectByType<AntiEarth>();
         theUIManager = FindAnyObjectByType<UIManager>();
 
         EarthLine.positionCount = 2;
-        AntiEarthLine.positionCount = 2;
+        //AntiEarthLine.positionCount = 2;
 
         ALine.positionCount = 2;
         PLine.positionCount = 2;
@@ -48,7 +55,7 @@ public class PointManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.T)) DeleteArea();
 
         EarthLine.SetPosition(0, sun.position);
-        AntiEarthLine.SetPosition(0, sun.position);
+        //AntiEarthLine.SetPosition(0, sun.position);
 
         p1Line.SetPosition(0, sun.position);
         p2Line.SetPosition(0, sun.position);
@@ -56,7 +63,7 @@ public class PointManager : MonoBehaviour
         q2Line.SetPosition(0, sun.position);
 
         EarthLine.SetPosition(1, Earth.position);
-        AntiEarthLine.SetPosition(1, AntiEarth.position);
+        //AntiEarthLine.SetPosition(1, AntiEarth.position);
     }
 
     public void SetAphelion(Vector3 position)
@@ -85,23 +92,42 @@ public class PointManager : MonoBehaviour
 
     private void SetArea()
     {
-        if (is_setted)
+        if (seted_idx == 0)
         {
-            p2Line.SetPosition(1, Earth.position);
-            q2Line.SetPosition(1, AntiEarth.position);
+            p1Theta = theEarth.GetTheta();
+            q1Theta = theAntiEarth.GetTheta();
 
-            p2Line.enabled = true;
-            q2Line.enabled = true;
-        }
-        else
-        {
             p1Line.SetPosition(1, Earth.position);
             q1Line.SetPosition(1, AntiEarth.position);
 
             p1Line.enabled = true;
             q1Line.enabled = true;
 
-            is_setted = true;
+            seted_idx++;
+        }
+        else if(seted_idx == 1)
+        {
+            p2Theta = theEarth.GetTheta();
+            q2Theta = theAntiEarth.GetTheta();
+
+            float area1Theta = Mathf.Abs(p1Theta - p2Theta);
+            float area2Theta = Mathf.Abs(q1Theta - q2Theta);
+
+            float area1R = theEarth.GetR();
+            float area2R = theAntiEarth.GetR();
+
+            float area1 = 0.5f * area1R * area1R * area1Theta;
+            float area2 = 0.5f * area2R * area2R * area2Theta;
+
+            p2Line.SetPosition(1, Earth.position);
+            q2Line.SetPosition(1, AntiEarth.position);
+
+            theUIManager.ShowAreaText(area1, area2);
+
+            p2Line.enabled = true;
+            q2Line.enabled = true;
+
+            seted_idx++;
         }
     }
 
@@ -112,6 +138,6 @@ public class PointManager : MonoBehaviour
         q1Line.enabled = false;
         q2Line.enabled = false;
 
-        is_setted = false;
+        seted_idx = 0;
     }
 }
