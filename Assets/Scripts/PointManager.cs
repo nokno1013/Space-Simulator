@@ -26,6 +26,11 @@ public class PointManager : MonoBehaviour
     float p2Theta;
     float q2Theta;
 
+    float p1R;
+    float q1R;
+    float p2R;
+    float q2R;
+
     private int seted_idx = 0;
 
     void Start()
@@ -36,6 +41,7 @@ public class PointManager : MonoBehaviour
 
         EarthLine.positionCount = 2;
         //AntiEarthLine.positionCount = 2;
+        AntiEarthLine.enabled = false;
 
         ALine.positionCount = 2;
         PLine.positionCount = 2;
@@ -97,6 +103,9 @@ public class PointManager : MonoBehaviour
             p1Theta = theEarth.GetTheta();
             q1Theta = theAntiEarth.GetTheta();
 
+            p1R = theEarth.GetR();
+            q1R = theAntiEarth.GetR();
+
             p1Line.SetPosition(1, Earth.position);
             q1Line.SetPosition(1, AntiEarth.position);
 
@@ -110,19 +119,19 @@ public class PointManager : MonoBehaviour
             p2Theta = theEarth.GetTheta();
             q2Theta = theAntiEarth.GetTheta();
 
+            p2R = theEarth.GetR();
+            q2R = theAntiEarth.GetR();
+
             float area1Theta = Mathf.Abs(p1Theta - p2Theta);
             float area2Theta = Mathf.Abs(q1Theta - q2Theta);
 
-            float area1R = theEarth.GetR();
-            float area2R = theAntiEarth.GetR();
+            float area1 = 0.5f * Mathf.Sin(area1Theta) * p1R * p2R;
+            float area2 = 0.5f * Mathf.Sin(area2Theta) * q1R * q2R;
 
-            float area1 = 0.5f * area1R * area1R * area1Theta;
-            float area2 = 0.5f * area2R * area2R * area2Theta;
+            theUIManager.ShowAreaText(area1, area2);
 
             p2Line.SetPosition(1, Earth.position);
             q2Line.SetPosition(1, AntiEarth.position);
-
-            theUIManager.ShowAreaText(area1, area2);
 
             p2Line.enabled = true;
             q2Line.enabled = true;
@@ -137,6 +146,8 @@ public class PointManager : MonoBehaviour
         p2Line.enabled = false;
         q1Line.enabled = false;
         q2Line.enabled = false;
+
+        theUIManager.ShowAreaText(0, 0);
 
         seted_idx = 0;
     }

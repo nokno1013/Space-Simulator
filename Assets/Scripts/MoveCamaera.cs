@@ -10,8 +10,8 @@ public class MoveCamaera : MonoBehaviour
 
     UIManager theUIManager;
 
-    private float yaw = 0f;
-    private float pitch = 0f;
+    private float rotationX = 0f;
+    private float rotationY = 0f;
 
     private bool is_parent = false;
 
@@ -20,36 +20,49 @@ public class MoveCamaera : MonoBehaviour
         theUIManager = FindAnyObjectByType<UIManager>();
 
         Cursor.lockState = CursorLockMode.Locked;   //커서 숨김
-        Cursor.visible = false;     //커서 고정
     }
 
     void Update()
     {
+        CameraLook();
+        CameraMove();
+
+        if (Input.GetKeyUp(KeyCode.G)) SetFollow();
+    }
+
+    private void CameraLook()
+    {
         float mouseX = Input.GetAxis("Mouse X") * lookSpeed;
         float mouseY = Input.GetAxis("Mouse Y") * lookSpeed;
 
-        yaw += mouseX;
-        pitch -= mouseY;
-        pitch = Mathf.Clamp(pitch, -90f, 90f);  //최대 90도까지 제한
+        rotationX -= mouseY;
+        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
 
-        transform.eulerAngles = new Vector3(pitch, yaw, 0f);
+        rotationY += mouseX;
 
-        Vector3 move = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W)) move += transform.forward;
-        if (Input.GetKey(KeyCode.S)) move -= transform.forward;
-        if (Input.GetKey(KeyCode.A)) move -= transform.right;
-        if (Input.GetKey(KeyCode.D)) move += transform.right;
-        if (Input.GetKey(KeyCode.Space)) move += transform.up;
-        if (Input.GetKey(KeyCode.LeftShift)) move -= transform.up;
-
-        if (Input.GetKeyUp(KeyCode.G)) SetFollow();
-
-        transform.position += move.normalized * moveSpeed * Time.deltaTime;
-
-        //if(Input.GetKeyUp(KeyCode.Escape)) Application.Quit();
+        transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0f);
     }
 
+    private void CameraMove()
+    {
+        float undt = Time.unscaledDeltaTime;
+
+        float moveX = 0;
+        float moveZ = 0;
+        float moveY = 0;
+
+        if (Input.GetKey(KeyCode.W)) moveZ += moveSpeed * undt;
+        if (Input.GetKey(KeyCode.A)) moveX -= moveSpeed * undt;
+        if (Input.GetKey(KeyCode.S)) moveZ -= moveSpeed * undt;
+        if (Input.GetKey(KeyCode.D)) moveX += moveSpeed * undt;
+
+        if (Input.GetKey(KeyCode.Space)) moveY += moveSpeed * undt;
+        if (Input.GetKey(KeyCode.LeftShift)) moveY -= moveSpeed * undt;
+
+        Vector3 move = transform.right * moveX + transform.up * moveY + transform.forward * moveZ;
+        transform.position += move;
+    }
+    
     private void SetFollow()
     {
         if (!is_parent)
