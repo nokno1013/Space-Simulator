@@ -34,13 +34,10 @@ public class UIManager : MonoBehaviour
 
     public void ShowAreaText(float area1, float area2)
     {
-        int c = 1000000000;
-
         AreaText.text = "넓이 설정(단축키 R)\n" +
             "넓이 삭제(단축키 T)\n" +
-            $"민트색 넓이: {area1 * c}km²\n" +
-            $"노란색 넓이: {area2 * c}km²\n" +
-            $"넓이의 차: {Mathf.Abs(area1 - area2) * c}km²";
+            $"민트색 넓이: {area1}\n" + 
+            $"노란색 넓이: {area2}\n";
     }
 
 

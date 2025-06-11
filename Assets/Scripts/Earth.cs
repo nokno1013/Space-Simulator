@@ -82,10 +82,10 @@ public class Earth : MonoBehaviour
         }
     }
 
-    private Vector3 GetPosition(float angle)
+    private Vector3 GetPosition(float theta)
     {
-        float x = LongR * Mathf.Cos(angle);
-        float z = ShortR * Mathf.Sin(angle);
+        float x = LongR * Mathf.Cos(theta);
+        float z = ShortR * Mathf.Sin(theta);
         return new Vector3(x, 0, z);
     }
 

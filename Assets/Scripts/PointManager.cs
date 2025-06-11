@@ -4,10 +4,8 @@ public class PointManager : MonoBehaviour
 {
     [SerializeField] Transform sun;
     [SerializeField] Transform Earth;
-    [SerializeField] Transform AntiEarth;
 
     [SerializeField] LineRenderer EarthLine;
-    [SerializeField] LineRenderer AntiEarthLine;
 
     [SerializeField] LineRenderer ALine;
     [SerializeField] LineRenderer PLine;
@@ -18,7 +16,6 @@ public class PointManager : MonoBehaviour
     [SerializeField] LineRenderer q2Line;
 
     Earth theEarth;
-    AntiEarth theAntiEarth;
     UIManager theUIManager;
 
     float p1Theta;
@@ -31,17 +28,17 @@ public class PointManager : MonoBehaviour
     float p2R;
     float q2R;
 
+    float area1 = 0;
+    float area2 = 0;
+
     private int seted_idx = 0;
 
     void Start()
     {
         theEarth = FindAnyObjectByType<Earth>();
-        theAntiEarth = FindAnyObjectByType<AntiEarth>();
         theUIManager = FindAnyObjectByType<UIManager>();
 
         EarthLine.positionCount = 2;
-        //AntiEarthLine.positionCount = 2;
-        AntiEarthLine.enabled = false;
 
         ALine.positionCount = 2;
         PLine.positionCount = 2;
@@ -60,8 +57,11 @@ public class PointManager : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.R)) SetArea();
         if (Input.GetKeyUp(KeyCode.T)) DeleteArea();
 
+        if (seted_idx == 3) CalculateArea();
+
+        theUIManager.ShowAreaText(area1, area2);
+
         EarthLine.SetPosition(0, sun.position);
-        //AntiEarthLine.SetPosition(0, sun.position);
 
         p1Line.SetPosition(0, sun.position);
         p2Line.SetPosition(0, sun.position);
@@ -69,7 +69,6 @@ public class PointManager : MonoBehaviour
         q2Line.SetPosition(0, sun.position);
 
         EarthLine.SetPosition(1, Earth.position);
-        //AntiEarthLine.SetPosition(1, AntiEarth.position);
     }
 
     public void SetAphelion(Vector3 position)
@@ -87,7 +86,6 @@ public class PointManager : MonoBehaviour
     private void SwupLineEnable()
     {
         EarthLine.enabled = !EarthLine.enabled;
-        AntiEarthLine.enabled |= AntiEarthLine.enabled;
 
         ALine.enabled = !ALine.enabled;
         PLine.enabled = !PLine.enabled;
@@ -101,40 +99,34 @@ public class PointManager : MonoBehaviour
         if (seted_idx == 0)
         {
             p1Theta = theEarth.GetTheta();
-            q1Theta = theAntiEarth.GetTheta();
-
             p1R = theEarth.GetR();
-            q1R = theAntiEarth.GetR();
 
             p1Line.SetPosition(1, Earth.position);
-            q1Line.SetPosition(1, AntiEarth.position);
-
             p1Line.enabled = true;
-            q1Line.enabled = true;
 
             seted_idx++;
         }
-        else if(seted_idx == 1)
+        else if (seted_idx == 1)
         {
             p2Theta = theEarth.GetTheta();
-            q2Theta = theAntiEarth.GetTheta();
-
             p2R = theEarth.GetR();
-            q2R = theAntiEarth.GetR();
 
             float area1Theta = Mathf.Abs(p1Theta - p2Theta);
-            float area2Theta = Mathf.Abs(q1Theta - q2Theta);
-
-            float area1 = 0.5f * Mathf.Sin(area1Theta) * p1R * p2R;
-            float area2 = 0.5f * Mathf.Sin(area2Theta) * q1R * q2R;
-
-            theUIManager.ShowAreaText(area1, area2);
+            float area1R = (p1R + p2R) / 2;
+            area1 = 0.5f * area1Theta * area1R * area1R;
 
             p2Line.SetPosition(1, Earth.position);
-            q2Line.SetPosition(1, AntiEarth.position);
-
             p2Line.enabled = true;
-            q2Line.enabled = true;
+
+            seted_idx++;
+        }
+        else if (seted_idx == 2)
+        {
+            q1Theta = theEarth.GetTheta();
+            q1R = theEarth.GetR();
+
+            q1Line.SetPosition(1, Earth.position);
+            q1Line.enabled = true;
 
             seted_idx++;
         }
@@ -147,8 +139,26 @@ public class PointManager : MonoBehaviour
         q1Line.enabled = false;
         q2Line.enabled = false;
 
-        theUIManager.ShowAreaText(0, 0);
-
+        area1 = 0;
+        area2 = 0;
         seted_idx = 0;
+    }
+
+    private void CalculateArea()
+    {
+        q2Theta = theEarth.GetTheta();
+        q2R = theEarth.GetR();
+
+        float area2Theta = Mathf.Abs(q1Theta - q2Theta);
+        float area2R = (q1R + q2R) / 2;
+        area2 = 0.5f * area2Theta * area2R * area2R;
+
+        if (Mathf.Abs(area1 - area2) <= 10)
+        {
+            q2Line.SetPosition(1, Earth.position);
+            q2Line.enabled = true;
+
+            seted_idx++;
+        }
     }
 }
