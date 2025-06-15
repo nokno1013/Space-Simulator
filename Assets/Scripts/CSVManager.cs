@@ -3,8 +3,9 @@ using System.IO;
 
 public class CSVManager : MonoBehaviour
 {
-    private string path;
     StreamWriter writer;
+
+    private string path;
 
     void Start()
     {

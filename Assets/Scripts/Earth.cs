@@ -15,6 +15,7 @@ public class Earth : MonoBehaviour
     CSVManager theCSVManager;
     PointManager thePointManager;
     UIManager theUIManager;
+    Sun theSun;
 
     private int segments = 365;
 
@@ -27,17 +28,19 @@ public class Earth : MonoBehaviour
     private float perihelion = 100000f;     //근일점
 
 
-    void Start()
+    private void Awake()
     {
         theCSVManager = FindAnyObjectByType<CSVManager>();
         thePointManager = FindAnyObjectByType<PointManager>();
         theUIManager = FindAnyObjectByType<UIManager>();
+        theSun = FindAnyObjectByType<Sun>();
+    }
 
-        ShortR = LongR * Mathf.Sqrt(1 - e * e); //단반경
-        CreateOrbit();
-        transform.position = GetPosition(theta);
-
+    void Start()
+    {
         segments = softness * 365;
+
+        StartSmulation();
     }
 
     void Update()
@@ -56,17 +59,31 @@ public class Earth : MonoBehaviour
         }
 
         //theCSVManager.WriteData(theta, r, v, w, position);
-        //theUIManager.ShowInfoText(r, v, w, position);
+        theUIManager.ShowInfoText(r, v, w, position);
     }
 
-    public float GetTheta()
+    public void StartSmulation()
     {
-        return theta;
+        ShortR = LongR * Mathf.Sqrt(1 - e * e); //단반경
+        CreateOrbit();
+        transform.position = GetPosition(theta);
+        
+        aphelion = 0f;     //원일점
+        perihelion = 100000f;     //근일점
+        theta = 0;
+
+        theSun.SetSun(LongR, ShortR);
     }
 
     public float GetR()
     {
         return r;
+    }
+
+    public void SetSize(float size)
+    {
+        size *= 3;
+        transform.localScale = new Vector3(size, size, size);
     }
 
     private void CreateOrbit()

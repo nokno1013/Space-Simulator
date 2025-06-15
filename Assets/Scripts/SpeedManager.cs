@@ -8,22 +8,27 @@ public class SpeedManager : MonoBehaviour
     [SerializeField] Sprite PausedImage;
 
     UIManager theUIManager;
+    SettingManager theSettingManager;
 
+    [HideInInspector] public float currentSpeed = 1.0f;
     bool is_paused = false;
-    private float currentSpeed = 1.0f;
 
     void Start()
     {
         theUIManager = FindAnyObjectByType<UIManager>();
+        theSettingManager = FindAnyObjectByType<SettingManager>();
     }
 
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.Z)) AddTimeScale(-1f);
-        if(Input.GetKeyUp(KeyCode.X)) AddTimeScale(-0.1f);
-        if(Input.GetKeyUp(KeyCode.C)) Pause();
-        if(Input.GetKeyUp(KeyCode.V)) AddTimeScale(0.1f);
-        if(Input.GetKeyUp(KeyCode.B)) AddTimeScale(1f);
+        if (!theSettingManager.is_SettingOpen)
+        {
+            if(Input.GetKeyUp(KeyCode.Z)) AddTimeScale(-1f);
+            if(Input.GetKeyUp(KeyCode.X)) AddTimeScale(-0.1f);
+            if(Input.GetKeyUp(KeyCode.C)) Pause();
+            if(Input.GetKeyUp(KeyCode.V)) AddTimeScale(0.1f);
+            if(Input.GetKeyUp(KeyCode.B)) AddTimeScale(1f);
+        }
 
         theUIManager.ShowSpeedText(currentSpeed);
     }
@@ -35,7 +40,12 @@ public class SpeedManager : MonoBehaviour
         {
             Time.timeScale = 0;
             currentSpeed = 0;
-
+            return;
+        }
+        else if(currentSpeed + scale > 100)
+        {
+            Time.timeScale = 100;
+            currentSpeed = 100;
             return;
         }
 

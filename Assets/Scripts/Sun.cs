@@ -2,13 +2,9 @@ using UnityEngine;
 
 public class Sun : MonoBehaviour
 {
-    Earth theEarth;
-
-    void Start()
+    public void SetSun(float a, float b)
     {
-        theEarth = FindAnyObjectByType<Earth>();
-
-        float c = Mathf.Sqrt(theEarth.LongR * theEarth.LongR - theEarth.ShortR * theEarth.ShortR);
+        float c = Mathf.Sqrt(a * a - b * b);
 
         transform.position = new Vector3(c, 0, 0);
     }

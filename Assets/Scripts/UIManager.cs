@@ -37,9 +37,9 @@ public class UIManager : MonoBehaviour
         AreaText.text = "넓이 설정(단축키 R)\n" +
             "넓이 삭제(단축키 T)\n" +
             $"민트색 넓이: {area1}\n" + 
-            $"노란색 넓이: {area2}\n";
+            $"노란색 넓이: {area2}\n" +
+            $"넓이 차이: {Mathf.Abs(area1 - area2)}\n";
     }
-
 
     public void ShowSpeedText(float TimeScale)
     {

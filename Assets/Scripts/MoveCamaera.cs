@@ -1,33 +1,74 @@
 using UnityEngine;
+using System.Collections;
 
 public class MoveCamaera : MonoBehaviour
 {
     [SerializeField] private Transform earth;
     [SerializeField] private Transform cam;
 
-    [SerializeField] float moveSpeed = 10f;
-    [SerializeField] float lookSpeed = 2f;
-
     UIManager theUIManager;
+    SettingManager theSettingManager;
+    StartUIManager theStartUIManager;
+
+    [HideInInspector] public float moveSpeed = 100f;
+    [HideInInspector] public float lookSpeed = 2f;
 
     private float rotationX = 0f;
     private float rotationY = 0f;
+
+    private float duration = 2f;
 
     private bool is_parent = false;
 
     void Start()
     {
         theUIManager = FindAnyObjectByType<UIManager>();
-
-        Cursor.lockState = CursorLockMode.Locked;   //Ä¿¼­ ¼û±è
+        theSettingManager = FindAnyObjectByType<SettingManager>();
+        theStartUIManager = FindAnyObjectByType<StartUIManager>();
     }
 
     void Update()
     {
-        CameraLook();
-        CameraMove();
+        if (!theStartUIManager.is_simulationStart) return;
 
-        if (Input.GetKeyUp(KeyCode.G)) SetFollow();
+        if (!theSettingManager.is_SettingOpen)
+        {
+            CameraLook();
+            CameraMove();
+
+            if (Input.GetKeyUp(KeyCode.G)) SetFollow();
+        }
+    }
+
+    public void GoToPosition(Transform targetTransform)
+    {
+        StartCoroutine(MoveCoroutine(targetTransform));
+    }
+
+    private IEnumerator MoveCoroutine(Transform targetTransform)
+    {
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
+
+        Vector3 endPos = targetTransform.position;
+        Quaternion endRot = targetTransform.rotation;
+
+        float time = 0f;
+
+        while (time < duration)
+        {
+            float t = time / duration;
+            t = Mathf.SmoothStep(0f, 1f, t);
+
+            transform.position = Vector3.Lerp(startPos, endPos, t);
+            transform.rotation = Quaternion.Slerp(startRot, endRot, t);
+
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = endPos;
+        transform.rotation = endRot;
     }
 
     private void CameraLook()
@@ -36,11 +77,11 @@ public class MoveCamaera : MonoBehaviour
         float mouseY = Input.GetAxis("Mouse Y") * lookSpeed;
 
         rotationX -= mouseY;
-        rotationX = Mathf.Clamp(rotationX, -90f, 90f);
+        rotationX = Mathf.Clamp(rotationX, -160f, 20f);
 
         rotationY += mouseX;
 
-        transform.localRotation = Quaternion.Euler(rotationX, rotationY, 0f);
+        transform.localRotation = Quaternion.Euler(rotationX + 70, rotationY, 0f);
     }
 
     private void CameraMove()
